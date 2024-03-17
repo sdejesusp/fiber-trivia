@@ -1,19 +1,36 @@
 package main
 
 import (
+	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sdejesusp/fiber-trivia/database"
 )
 
 func main() {
-    database.ConnectDb()
-    app := fiber.New()
+	// Connection with the Postgres DB
+	database.ConnectDb()
 
-    setupRoutes(app)
+	// Fiber instance
+	app := fiber.New()
 
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, from a Docker fiber container.")
-    })
+	// Basic configuration for the API documentation
+	cfg := swagger.Config{
+		BasePath: "/",
+		FilePath: "./docs/swagger.yaml",
+		Path:     "swagger",
+		Title:    "Fiber Trivia API Docs",
+		CacheAge: 1,
+	}
 
-    app.Listen(":3000")
+	// Swagger middleware
+	app.Use(swagger.New(cfg))
+
+	// API routes
+	setupRoutes(app)
+
+	app.Get("/welcome", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, from a Docker Fiber")
+	})
+
+	app.Listen(":3000")
 }

@@ -1,0 +1,115 @@
+openapi: "3.0.3"
+info:
+  title: "Fiber Trivia"
+  version: "v1"
+servers:
+  - url: http://localhost:3000
+paths:
+  /welcome:
+    get:
+      summary: "Welcome message"
+      responses:
+        "200":
+          description: "Welcome messageform the API"
+  /fact:
+    get:
+      summary: List
+      description: "Return all question and answers"
+      responses:
+        "200":
+          description: "Get all the records"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    created_at:
+                      type: string
+                    updated_at:
+                      type: string
+                    question:
+                      type: string
+                    answer:
+                      type: string
+        "400":
+          description: "Invalid status value"
+
+    post:
+      summary: "New question"
+      description: "Add a new question to the record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: "How many states are in the US?"
+                answer:
+                  type: string
+                  example: "51"
+      responses:
+        "201":
+          description: "Successfully created a new record"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 5
+                  created_at:
+                    type: string
+                    example: "2024-03-16T18:19:07.263434Z"
+                  updated_at:
+                    type: string
+                    example: "2024-03-16T18:19:07.263434Z"
+                  question:
+                    type: string
+                    example: How many states are in the US?
+                  answer:
+                    type: string
+                    example: "Fifty"
+
+  /fact/{id}:
+    get:
+      description: "Get a single record"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: The record id
+            example: 21
+      responses:
+        "200":
+          description: "Record object"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 21
+                  created_at:
+                    type: string
+                    example: "2024-03-16T18:19:07.263434Z"
+                  updated_at:
+                    type: string
+                    example: "2024-03-16T18:19:07.263434Z"
+                  question:
+                    type: string
+                    example: "How many states are in the US?"
+                  answer:
+                    type: string
+                    example: "Fifty"
+        "204":
+          description: "Record not found"

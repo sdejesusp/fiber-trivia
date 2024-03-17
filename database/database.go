@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-
 type Dbinstance struct {
 	Db *gorm.DB
 }
@@ -25,7 +24,7 @@ func ConnectDb() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 	)
-	
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
@@ -45,4 +44,3 @@ func ConnectDb() {
 		Db: db,
 	}
 }
-
