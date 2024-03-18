@@ -20,11 +20,26 @@ This project uses the following technologies:
    - Air - Live reload for Go apps
 ---
 ## How to Run
+Before to run the project, the following variables must to be in your .env file:
 ```
-docker-compose up
+- DB_USER
+- DB_PASSWORD
+- DB_NAME
+
+Example: 
+
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=postgres
+```
+
+To run the application, execute the following:
+```
+❯ docker-compose up
 
 It will look like this:
 ❯ docker-compose ps
+
 NAME                COMMAND                  SERVICE             STATUS              PORTS
 db                  "docker-entrypoint.s…"   db                  running             0.0.0.0:5434->5432/tcp
 web                 "air cmd/main.go -b …"   web                 running             0.0.0.0:3000->3000/tcp
