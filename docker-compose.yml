@@ -13,6 +13,7 @@ services:
     command: air cmd/main.go -b 0.0.0.0
   db:
     image: postgres:alpine
+    container_name: db
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
