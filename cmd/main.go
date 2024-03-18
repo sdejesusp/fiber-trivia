@@ -28,9 +28,5 @@ func main() {
 	// API routes
 	setupRoutes(app)
 
-	app.Get("/welcome", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, from a Docker Fiber")
-	})
-
 	app.Listen(":3000")
 }

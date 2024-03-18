@@ -1,19 +1,52 @@
 openapi: "3.0.3"
 info:
-  title: "Fiber Trivia"
+  title: "Fiber API - Facts"
   version: "v1"
+  description: |-
+    This a simple API using the Fiber (Golang) framework
+
+    User can do the following operations:
+
+    - Create a new records with a questions and an answers - Facts
+    - List all records in the DB
+    - List an individual record by ID
+    - Update a record by ID
+    - Delete a record by ID
+
+    List of technologies:
+
+    - Fiber: Golang framework
+    - PostgreSQL
+    - Docker
+    - Swagger middleware
+    - Air - Live reload for Go apps
+
+  contact:
+    name: "Sterling De Jesus"
+  license:
+    url: https://www.apache.org/license
+    name: Apache 2.0
+tags:
+  - name: Welcome
+    description: "API welcome message"
+  - name: Facts
+    description: "Well known facts"
 servers:
   - url: http://localhost:3000
 paths:
   /welcome:
     get:
+      tags:
+        - Welcome
       summary: "Welcome message"
       responses:
         "200":
-          description: "Welcome messageform the API"
+          description: "Welcome message from the API"
   /fact:
     get:
-      summary: List
+      tags:
+        - Facts
+      summary: "Get all records"
       description: "Return all question and answers"
       responses:
         "200":
@@ -39,7 +72,9 @@ paths:
           description: "Invalid status value"
 
     post:
-      summary: "New question"
+      tags:
+        - Facts
+      summary: "Create a new record"
       description: "Add a new question to the record"
       requestBody:
         content:
@@ -59,26 +94,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 5
-                  created_at:
-                    type: string
-                    example: "2024-03-16T18:19:07.263434Z"
-                  updated_at:
-                    type: string
-                    example: "2024-03-16T18:19:07.263434Z"
-                  question:
-                    type: string
-                    example: How many states are in the US?
-                  answer:
-                    type: string
-                    example: "Fifty"
-
+                $ref: "#/definitions/ApiResponse"
   /fact/{id}:
     get:
+      tags:
+        - Facts
+      summary: "Retrieve a record"
       description: "Get a single record"
       parameters:
         - in: path
@@ -86,30 +107,86 @@ paths:
           required: true
           schema:
             type: string
-            description: The record id
-            example: 21
+            description: "Record ID"
+            example: 11
       responses:
         "200":
           description: "Record object"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 21
-                  created_at:
-                    type: string
-                    example: "2024-03-16T18:19:07.263434Z"
-                  updated_at:
-                    type: string
-                    example: "2024-03-16T18:19:07.263434Z"
-                  question:
-                    type: string
-                    example: "How many states are in the US?"
-                  answer:
-                    type: string
-                    example: "Fifty"
-        "204":
+                $ref: "#/definitions/ApiResponse"
+        "404":
           description: "Record not found"
+    put:
+      tags:
+        - Facts
+      summary: "Update a record"
+      description: "Update the question and answer of a record by the record ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: "Record ID"
+            example: 11
+      requestBody:
+        description: "Fact details"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: "How many time zones are in DR?"
+                answer:
+                  type: string
+                  example: "One"
+      responses:
+        "200":
+          description: "Successfully updated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/ApiResponse"
+        "404":
+          description: "Record not found"
+    delete:
+      tags:
+        - Facts
+      summary: "Delete a record"
+      description: "Delete a record by the ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: "Record ID"
+            example: 11
+      responses:
+        "204":
+          description: "Record successfully deleted"
+        "404":
+          description: "Record not found"
+definitions:
+  ApiResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 11
+      created_at:
+        type: string
+        example: "2024-03-16T18:19:07.263434Z"
+      updated_at:
+        type: string
+        example: "2024-03-16T18:19:07.263434Z"
+      question:
+        type: string
+        example: "How many states are in the US?"
+      answer:
+        type: string
+        example: "Fifty one"

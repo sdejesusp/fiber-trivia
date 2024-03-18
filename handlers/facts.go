@@ -8,6 +8,10 @@ import (
 	"github.com/sdejesusp/fiber-trivia/models"
 )
 
+func Welcome(c *fiber.Ctx) error {
+	return c.SendString("Hello, from a Docker Fiber")
+}
+
 func ListFacts(c *fiber.Ctx) error {
 	facts := []models.Fact{}
 
@@ -50,4 +54,55 @@ func GetSingleFact(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fact)
+}
+
+func UpdateFact(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	var fact models.Fact
+
+	if err := FindFact(id, &fact); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	type UpdateFact struct {
+		Question string `json:"question"`
+		Answer   string `json:"answer"`
+	}
+
+	var updateData UpdateFact
+
+	if err := c.BodyParser(&updateData); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	fact.Question = updateData.Question
+	fact.Answer = updateData.Answer
+
+	database.DB.Db.Save(&fact)
+	return c.Status(fiber.StatusOK).JSON(fact)
+}
+
+func DeleteFact(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	var fact models.Fact
+	if err := FindFact(id, &fact); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	if err := database.DB.Db.Delete(&fact).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).SendString("Record successfully deleted")
+
 }
